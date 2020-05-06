@@ -8,7 +8,7 @@ import { username, password } from '../sensitive';
 import { tParams, tGenericObject } from './typings'
 import Logger from './logger';
 
-const cachePath = path.resolve(__dirname, '../cookie-cache.json');
+const cachePath = path.resolve(__dirname, './cookie-cache.json');
 const generalOptions = {
   host: constants.host,
   path: constants.loginPath,
@@ -24,7 +24,7 @@ function getViewState(body: string): string {
   }
   let results = '';
   let startIdx = target.length + targetIdx;
-  let char = 'somethibg';
+  let char = '_';
   while (char) {
     char = body[startIdx++];
     if (char === '"') {

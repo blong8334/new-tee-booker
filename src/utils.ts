@@ -7,7 +7,10 @@ import { tGenericObject } from './typings'
 
 const logger = new Logger(__filename);
 
-export function request(params: tGenericObject, options: tGenericObject): Promise<{ results: string; headers: any }> {
+export function request(params: tGenericObject, options?: tGenericObject): Promise<{ results: string; headers: any }> {
+  if (!options) {
+    options = {};
+  }
   return new Promise((resolve, reject) => {
     const req = https.request(params, (res: { [key: string]: any }) => {
       logger.info('statusCode:', res.statusCode);
@@ -18,7 +21,7 @@ export function request(params: tGenericObject, options: tGenericObject): Promis
         results += data;
       });
       res.on('end', (data: string) => {
-        results += data;
+        results += (data || '');
         const returnResults = { results, headers: null };
         if (options.returnHeaders) {
           returnResults.headers = res.headers;
@@ -47,7 +50,7 @@ export function rawCookieToObject(rawCookie: string[]): tGenericObject {
   }, {});
 }
 
-export function writeToCache(data: tGenericObject, fileName: string): void {
+export function writeToCache(data: tGenericObject | string, fileName: string): void {
   const cachePath = path.resolve(__dirname, `./${fileName}`);
   const stringData = typeof data !== 'string' ? JSON.stringify(data) : data;
   fs.writeFileSync(cachePath, stringData);
@@ -58,7 +61,7 @@ export function convertCookieToString(cookieObj: tGenericObject): string {
   return Object.keys(cookieObj)
     .map((key: string): string => {
       const value = cookieObj[key];
-      return value ? `${key}: ${value}` : key;
+      return value ? `${key}=${value}` : key;
     })
     .join('; ');
 }
