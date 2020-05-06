@@ -1,21 +1,23 @@
-class Logger {
-  constructor(filename) {
-    this.filename = filename;
-    this.helper = helper.bind(null, filename);
-  }
-  info(...args) {
-    this.helper('info', ...args);
-  }
-  error(...args) {
-    this.helper('error', ...args);
-  }
-  warn(...args) {
-    this.helper('warn', ...args);
-  }
-}
+type tStringArr = string[];
 
-function helper(filename, level, ...args) {
+function helper(filename: string, level: string, ...args: tStringArr): void {
   console[level](new Date().toISOString(), '|', filename, '|', ...args);
 }
 
-module.exports = Logger;
+export default class Logger {
+  public filename: string;
+  private helper: (...args: tStringArr) => void;
+  constructor(filename: string) {
+    this.filename = filename;
+    this.helper = helper.bind(null, filename);
+  }
+  public info(...args: tStringArr): void {
+    this.helper('info', ...args);
+  }
+  public error(...args: tStringArr): void {
+    this.helper('error', ...args);
+  }
+  public warn(...args: tStringArr): void {
+    this.helper('warn', ...args);
+  }
+}

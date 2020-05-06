@@ -1,28 +1,29 @@
-const fs = require('fs');
-const path = require('path');
-const Logger = require('./logger');
-const https = require('https');
-const { year, month, day } = require('../constants');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as https from 'https';
+
+import Logger from './logger';
+import { tGenericObject } from './typings'
+
 const logger = new Logger(__filename);
 
-const formattedDate = year + month + day;
-
-function request(params, options) {
+export function request(params: tGenericObject, options: tGenericObject): Promise<{ results: string; headers: any }> {
   return new Promise((resolve, reject) => {
-    const req = https.request(params, (res) => {
+    const req = https.request(params, (res: { [key: string]: any }) => {
       logger.info('statusCode:', res.statusCode);
       logger.info('headers:', res.headers);
       let results = '';
-      res.on('data', (data) => {
+      res.on('data', (data: string) => {
         logger.info('RECEIVING DATA');
         results += data;
       });
-      res.on('end', (data) => {
+      res.on('end', (data: string) => {
         results += data;
+        const returnResults = { results, headers: null };
         if (options.returnHeaders) {
-          results = { results, headers: res.headers };
+          returnResults.headers = res.headers;
         }
-        resolve(results);
+        resolve(returnResults);
         logger.info('REQUEST FINISHED');
       });
     });
@@ -36,7 +37,7 @@ function request(params, options) {
   });
 }
 
-function rawCookieToObject(rawCookie) {
+export function rawCookieToObject(rawCookie: string[]): tGenericObject {
   return rawCookie.reduce((results, lineString) => {
     return lineString.split('; ').reduce((results, cookieString) => {
       const splitString = cookieString.split('=');
@@ -46,23 +47,18 @@ function rawCookieToObject(rawCookie) {
   }, {});
 }
 
-function cookieObjectToString(cookieObject) {
-  
-}
-
-function writeToCache(data, fileName) {
+export function writeToCache(data: tGenericObject, fileName: string): void {
   const cachePath = path.resolve(__dirname, `./${fileName}`);
-  let stringData = data;
-  if (typeof stringData !== 'string') {
-    stringData = JSON.stringify(data);
-  }
+  const stringData = typeof data !== 'string' ? JSON.stringify(data) : data;
   fs.writeFileSync(cachePath, stringData);
   logger.info('Wrote to cache');
 }
 
-module.exports = {
-  formattedDate,
-  request,
-  writeToCache,
-  rawCookieToObject,
-};
+export function convertCookieToString(cookieObj: tGenericObject): string {
+  return Object.keys(cookieObj)
+    .map((key: string): string => {
+      const value = cookieObj[key];
+      return value ? `${key}: ${value}` : key;
+    })
+    .join('; ');
+}
