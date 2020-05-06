@@ -2,9 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const Logger = require('./logger');
 const https = require('https');
-const { year, month, day } = require('./constants');
+const { year, month, day } = require('../constants');
 const logger = new Logger(__filename);
-const cachePath = path.resolve(__dirname, './cache.json');
 
 const formattedDate = year + month + day;
 
@@ -28,7 +27,7 @@ function request(params, options) {
       });
     });
     req.on('error', (err) => {
-      reject(err)
+      reject(err);
     });
     if (options.write) {
       req.write(options.write);
@@ -37,7 +36,7 @@ function request(params, options) {
   });
 }
 
-function formatCookie(rawCookie) {
+function rawCookieToObject(rawCookie) {
   return rawCookie.reduce((results, lineString) => {
     return lineString.split('; ').reduce((results, cookieString) => {
       const splitString = cookieString.split('=');
@@ -47,7 +46,12 @@ function formatCookie(rawCookie) {
   }, {});
 }
 
-function writeToCache(data) {
+function cookieObjectToString(cookieObject) {
+  
+}
+
+function writeToCache(data, fileName) {
+  const cachePath = path.resolve(__dirname, `./${fileName}`);
   let stringData = data;
   if (typeof stringData !== 'string') {
     stringData = JSON.stringify(data);
@@ -56,31 +60,9 @@ function writeToCache(data) {
   logger.info('Wrote to cache');
 }
 
-async function getAuthCookie() {
-  // check cache. check expiration. if cookie is still valid, return it.
-  // otherwise get new cookie and write to cache. then return it.
-  let cache = fs.readFileSync(cachePath, { encoding: 'utf8' });
-  if (typeof cache === 'string') {
-    cache = JSON.parse(cache);
-  }
-  const expireDate = new Date(cache.Cookie.expires);
-  const currentTime = new Date();
-  if (currentTime.valueOf() < expireDate.valueOf()) {
-    return Object.keys(cache.Cookie).reduce((results, key) => {
-      results += key;
-      const value = cache.Cookie[key];
-      if (value) {
-        results += `=${value}`;
-      }
-      return results + '; ';
-    }, '').slice(0, -2);
-  }
-}
-
 module.exports = {
   formattedDate,
   request,
   writeToCache,
-  formatCookie,
-  getAuthCookie,
+  rawCookieToObject,
 };

@@ -1,4 +1,5 @@
 node_modules
 .vscode
 sensitive.js
-cache.json
+*cache.json
+dist

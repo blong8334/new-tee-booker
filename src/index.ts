@@ -1,18 +1,17 @@
 const Logger = require('./logger');
 const querystring = require('querystring');
-const { getAuthCookie, writeToCache, request, formatCookie } = require('./utils');
-const config = require('./constants');
-const { username, password } = require('./sensitive');
+const { getAuthCookie, writeToCache, request, rawCookieToObject } = require('./utils');
+const config = require('../constants');
+const { username, password } = require('../sensitive');
 const { host, loginPath } = config;
 const logger = new Logger(__filename);
 
 (async function () {
   try {
-    const cookie = getAuthCookie();
-    logger.info(cookie);
-    // const { Cookie, viewState } = await getParams();
-    // const authCookie = await login(Cookie, viewState);
-    // writeToCache({ Cookie: formatCookie(authCookie) });
+    const { Cookie, viewState } = await getParams();
+    const authCookie = await login(Cookie, viewState);
+    const combinedCooks = Cookie.concat(authCookie);
+    writeToCache({ Cookie: rawCookieToObject(combinedCooks) }, 'cookie-cache.json');
   } catch (error) {
     logger.error(error);
   }
