@@ -4,6 +4,7 @@ module.exports = {
   month: '05',
   day: '09',
   host: 'newjerseynational.clubhouseonline-e3.com',
+  loginPath: '/login.aspx',
   timesPath: (date, courseId) => `/api/v1/teetimes/GetAvailableTeeTimes/${date}/${courseId}/0/null/false`,
   proceedPath: (bookingId) => `/api/v1/teetimes/ProceedBooking/${bookingId}`,
   formUsername: 'p$lt$PageContent$pageplaceholder$p$lt$zoneLeft$CHOLogin$LoginControl$ctl00$Login1$UserName',

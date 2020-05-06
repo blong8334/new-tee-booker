@@ -1,22 +1,24 @@
 const Logger = require('./logger');
 const querystring = require('querystring');
-const { formattedDate, request } = require('./utils');
+const { getAuthCookie, writeToCache, request, formatCookie } = require('./utils');
 const config = require('./constants');
 const { username, password } = require('./sensitive');
-const { host } = config;
+const { host, loginPath } = config;
 const logger = new Logger(__filename);
 
 (async function () {
   try {
-    const { Cookie, viewState } = await getCookies();
-    const authCookie = await login(Cookie, viewState);
-
+    const cookie = getAuthCookie();
+    logger.info(cookie);
+    // const { Cookie, viewState } = await getParams();
+    // const authCookie = await login(Cookie, viewState);
+    // writeToCache({ Cookie: formatCookie(authCookie) });
   } catch (error) {
     logger.error(error);
   }
 })();
 
-async function login(cookies, viewState) {
+async function login(Cookie, viewState) {
   const form = {
     [config.formUsername]: username,
     [config.formPassword]: password,
@@ -26,10 +28,9 @@ async function login(cookies, viewState) {
   const formData = querystring.stringify(form);
   const requestOptions = {
     host,
-    path: '/login.aspx',
+    path: loginPath,
     headers: {
-      Cookie: cookies,
-      'Upgrade-Insecure-Requests': 1,
+      Cookie,
       'Content-Length': Buffer.byteLength(formData),
       'Content-Type': 'application/x-www-form-urlencoded',
     },
@@ -39,10 +40,10 @@ async function login(cookies, viewState) {
   return headers['set-cookie'];
 }
 
-async function getCookies() {
+async function getParams() {
   const requestOptions = {
     host,
-    path: '/login.aspx',
+    path: loginPath,
     method: 'GET',
   };
   const { results, headers } = await request(requestOptions, { returnHeaders: true });
@@ -55,8 +56,8 @@ function getViewState(body) {
   const targetIdx = body.indexOf(target);
   let results = '';
   let startIdx = target.length + targetIdx;
-  while (true) {
-    const char = body[startIdx++];
+  let char;
+  while (char = body[startIdx++]) {
     if (char === '"') {
       return results;
     }
