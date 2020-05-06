@@ -1,11 +1,41 @@
 {
   "name": "new-tee-booker",
   "version": "1.0.0",
-  "description": "",
+  "description": "A service that books golf tee times for my cronies and me.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .ts",
+    "compile": "tsc && tsc --allowJs false --declaration true",
+    "build": "npm run lint && npm run compile",
+    "full-build": "npm run clean && npm run build",
+    "test": "WAIT=false OWNER=long ./node_modules/.bin/ts-node src/index",
+    "copy-sensitive": "scp -r -F ~/.ssh/config ~/projects/new-tee-booker/sensitive.js ec2-user@aws:/home/ec2-user/new-tee-booker/sensitive.js",
+    "copy-config": "scp -r -F ~/.ssh/config ~/projects/new-tee-booker/config.js ec2-user@aws:/home/ec2-user/new-tee-booker/config.js",
+    "copy-all": "npm run copy-sensitive && npm run copy-config",
+    "start": "./node_modules/.bin/pm2 start ecosystem.config.js",
+    "start-long": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"long-booker\"",
+    "start-leddy": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"leddy-booker\""
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^13.13.5",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "eslint": "^6.8.0",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "pm2": "^4.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blong8334/new-tee-booker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blong8334/new-tee-booker/issues"
+  },
+  "homepage": "https://github.com/blong8334/new-tee-booker#readme"
 }
