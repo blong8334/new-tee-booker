@@ -15,7 +15,6 @@ const generalOptions = {
 };
 const logger = new Logger(__filename);
 
-
 function getViewState(body: string): string {
   const target = 'id="__VIEWSTATE" value="';
   const targetIdx = body.indexOf(target);

@@ -3,9 +3,11 @@ import { getCookies } from './authenticator';
 import { getTeeSheet } from './retriever';
 import { proceedwithBooking } from './proceeder';
 import { bookTime } from './booker';
+import { tryToBookAt } from '../config';
 
+const { year, month, day, hour, minute } = tryToBookAt;
 const logger = new Logger(__filename);
-const targetDate = new Date(2020, 4, 8, 15, 59);
+const targetDate = new Date(year, month, day, hour, minute);
 const msecondsToGo = (): number => targetDate.valueOf() - Date.now();
 
 async function proceed(teeSheet, cookies): Promise<void> {
