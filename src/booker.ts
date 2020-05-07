@@ -2,26 +2,25 @@ import { host, bookingPath } from '../constants';
 import { buddies, partners } from '../sensitive';
 import { request } from './utils';
 
+function getReservation(reservations): Array<object> {
+  const baseObject = {
+    ReservationType: reservations[0].resType,
+    ReservationId: reservations[0].reservationId,
+  };
+  const getObj = (FullName: string, MemberId: string): object => ({ ...baseObject, FullName, MemberId });
+  return [getObj(reservations[0].fullName, reservations[0].memberId)]
+    .concat(partners.map((name: string) => getObj(name, buddies[name])));
+}
+
 export async function bookTime(bookingInfo: any, Cookie: string): Promise<object> {
-  const { data: { bookingId, primaryPlayerId, reservations } } = bookingInfo;
-  const Reservations = [{
-    ReservationType: reservations[0].resType,
-    FullName: reservations[0].fullName,
-    MemberId: reservations[0].memberId,
-    ReservationId: reservations[0].reservationId,
-  }].concat(partners.map((name: string) => ({
-    ReservationType: reservations[0].resType,
-    FullName: name,
-    MemberId: buddies[name],
-    ReservationId: reservations[0].reservationId,
-  })));
+  const { data: { bookingId: BookingId, primaryPlayerId: OwnerId, reservations } } = bookingInfo;
   const bookingBody = {
-    BookingId: bookingId,
+    BookingId,
     Holes: 18,
     Mode: 'Booking',
     Notes: '',
-    OwnerId: primaryPlayerId,
-    Reservations,
+    OwnerId,
+    Reservations: getReservation(reservations),
     StartingHole: '1',
     enabled: true,
     wait: false,

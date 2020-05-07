@@ -30,8 +30,8 @@ const interval = setInterval(() => logger.info('Waiting for ', new Date(Date.now
   logger.info('Got cookies');
   const teeSheet = await getTeeSheet(cookies);
   logger.info('Got tee sheet');
-  setTimeout(async () => {
+  setTimeout(() => {
     clearInterval(interval);
-    await proceed(teeSheet, cookies);
+    proceed(teeSheet, cookies);
   }, msecondsToGo());
-})()
+})();
