@@ -1,14 +1,17 @@
+const { owner } = process.env;
 import * as fs from 'fs';
 import * as path from 'path';
 import * as querystring from 'querystring';
 
 import { convertCookieToString, request, rawCookieToObject, writeToCache } from './utils';
 import * as constants from '../constants';
-import { username, password } from '../sensitive';
+import sensitive from '../sensitive';
 import { tParams, tGenericObject } from './typings'
 import Logger from './logger';
 
-const cachePath = path.resolve(__dirname, '../cache/cookie.json');
+const fileName = `${owner}-cookie.jsoon`;
+const { [owner]: username, password } = sensitive;
+const cachePath = path.resolve(__dirname, `../cache/${fileName}`);
 const generalOptions = {
   host: constants.host,
   path: constants.loginPath,
@@ -70,7 +73,7 @@ async function getNewCookies(): Promise<tGenericObject> {
   const authCookie = await login(Cookie, viewState);
   const combinedCooks = Cookie.concat(authCookie);
   const newCooks = rawCookieToObject(combinedCooks);
-  writeToCache({ Cookie: newCooks }, 'cookie.json');
+  writeToCache({ Cookie: newCooks }, fileName);
   return newCooks;
 }
 

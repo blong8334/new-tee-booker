@@ -1,7 +1,10 @@
-import { targetTeeTime } from '../config';
+const { owner } = process.env;
+import config from '../config';
 import { proceedPath, host } from '../constants';
 import { request } from './utils';
 import { partners } from '../sensitive';
+
+const { targetTeeTime } = config[owner];
 
 function getBookingId(teeObject: any): string {
   const { teeSheet } = teeObject.data;

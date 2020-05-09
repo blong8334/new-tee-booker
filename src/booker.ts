@@ -1,6 +1,9 @@
+const { owner } = process.env;
 import { host, bookingPath } from '../constants';
-import { buddies, partners } from '../sensitive';
+import sensitive from '../sensitive';
 import { request } from './utils';
+
+const { [owner]: { partners }, buddies } = sensitive;
 
 function getReservation(reservations): Array<object> {
   const baseObject = {
