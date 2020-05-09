@@ -51,7 +51,7 @@ export function rawCookieToObject(rawCookie: string[]): tGenericObject {
 }
 
 export function writeToCache(data: tGenericObject | string, fileName: string): void {
-  const cachePath = path.resolve(__dirname, `./${fileName}`);
+  const cachePath = path.resolve(__dirname, `../cache/${fileName}`);
   const stringData = typeof data !== 'string' ? JSON.stringify(data) : data;
   fs.writeFileSync(cachePath, stringData);
   logger.info('Wrote to cache');

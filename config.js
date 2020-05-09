@@ -6,8 +6,8 @@ const isLocal = false;
 
 const golfDay = bookingDay + 14;
 
-const hour = 15; // 3 pm
-const minute = 59;
+const hour = 19; // 3 pm utc
+const minute = 55;
 
 const format = (number) => (number < 10 ? '0' : '') + number;
 

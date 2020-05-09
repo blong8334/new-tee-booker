@@ -8,7 +8,7 @@ import { username, password } from '../sensitive';
 import { tParams, tGenericObject } from './typings'
 import Logger from './logger';
 
-const cachePath = path.resolve(__dirname, './cookie-cache.json');
+const cachePath = path.resolve(__dirname, '../cache/cookie.json');
 const generalOptions = {
   host: constants.host,
   path: constants.loginPath,
@@ -70,7 +70,7 @@ async function getNewCookies(): Promise<tGenericObject> {
   const authCookie = await login(Cookie, viewState);
   const combinedCooks = Cookie.concat(authCookie);
   const newCooks = rawCookieToObject(combinedCooks);
-  writeToCache({ Cookie: newCooks }, 'cookie-cache.json');
+  writeToCache({ Cookie: newCooks }, 'cookie.json');
   return newCooks;
 }
 
