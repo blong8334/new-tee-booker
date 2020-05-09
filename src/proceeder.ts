@@ -1,10 +1,9 @@
-const { owner } = process.env;
-import config from '../config';
+const { OWNER } = process.env;
 import { proceedPath, host } from '../constants';
 import { request } from './utils';
-import { partners } from '../sensitive';
+import * as sensitive from '../sensitive';
 
-const { targetTeeTime } = config[owner];
+const { [OWNER]: { partners, targetTeeTime } } = sensitive;
 
 function getBookingId(teeObject: any): string {
   const { teeSheet } = teeObject.data;
