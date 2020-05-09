@@ -1,13 +1,13 @@
-const targetTeeTime = '13:30:00'
-const bookingDay = 8;
+const targetTeeTime = '10:30:00'
+const bookingDay = 9;
 const month = 5;
 const year = 2020;
 const isLocal = false;
 
+const golfDay = bookingDay + 14;
 
 const hour = 15; // 3 pm
 const minute = 59;
-const golfDay = bookingDay + 14;
 
 const format = (number) => (number < 10 ? '0' : '') + number;
 
@@ -23,5 +23,5 @@ module.exports = {
     day: bookingDay,
     hour,
     minute,
-  }
+  },
 };
