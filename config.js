@@ -1,6 +1,6 @@
 const { OWNER } = process.env;
 const { [OWNER]: { targetTeeTime } } = require('./sensitive');
-const bookingDay = 9;
+const bookingDay = 10;
 const month = 5;
 const year = 2020;
 const isLocal = false;
