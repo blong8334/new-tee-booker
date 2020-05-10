@@ -10,9 +10,9 @@
     "build": "npm run lint && npm run compile",
     "full-build": "npm run clean && npm run build",
     "test": "./node_modules/.bin/ts-node src/index",
-    "book-long": "OWNER=long ./node_modules/.bin/pm2 start dist/index.js --no-autorestart",
-    "book-leddy": "OWNER=leddy ./node_modules/.bin/pm2 start dist/index.js --no-autorestart",
-    "send-to-remote": "rm -rf dist node_modules && scp -r -F ~/.ssh/config ~/projects/new-tee-booker/* ec2-user@aws:/home/ec2-user/new-tee-booker"
+    "start": "./node_modules/.bin/pm2 start ecosystem.config.js",
+    "start-long": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"long-booker\"",
+    "start-leddy": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"leddy-booker\""
   },
   "author": "",
   "license": "ISC",
