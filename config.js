@@ -1,6 +1,6 @@
 const { OWNER } = process.env;
 const { [OWNER]: { targetTeeTime } } = require('./sensitive');
-const bookingDay = 10;
+const bookingDay = 11;
 const month = 5;
 const year = 2020;
 const isLocal = false;
@@ -8,7 +8,7 @@ const isLocal = false;
 const golfDay = bookingDay + 14;
 
 const hour = 19; // 3 pm utc
-const minute = 55;
+const minute = 45;
 
 const format = (number) => (number < 10 ? '0' : '') + number;
 
