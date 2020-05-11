@@ -53,6 +53,7 @@ function findBooking(teeObject: { data: { teeSheet: any[] } }): string {
       returnNextAvailable = true;
     } else if (isAvailable) {
       if (returnNextAvailable) return teeSheetTimeId;
+      logger.info(`Next best time is at ${teeTime}`);
       nextBestTeeId = teeSheetTimeId;
     }
   }
