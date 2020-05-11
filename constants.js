@@ -9,4 +9,5 @@ module.exports = {
   getTimesPath: (date, courseId) => `/api/v1/teetimes/GetAvailableTeeTimes/${date}/${courseId}/0/null/false`,
   proceedPath: (bookingId) => `/api/v1/teetimes/ProceedBooking/${bookingId}`,
   bookingPath: '/api/v1/teetimes/CommitBooking/0',
+  noTimesErrorMessage: 'No times left for the target booking day',
 };

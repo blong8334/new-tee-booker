@@ -1,4 +1,3 @@
-const { OWNER } = process.env;
 import { proceedPath, host } from '../constants';
 import { request } from './utils';
 

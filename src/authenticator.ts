@@ -1,4 +1,3 @@
-const { OWNER } = process.env;
 import * as fs from 'fs';
 import * as path from 'path';
 import * as querystring from 'querystring';
@@ -9,7 +8,7 @@ import * as sensitive from '../sensitive';
 import { tParams, tGenericObject } from './typings'
 import Logger from './logger';
 
-const logger = new Logger(__filename);
+const { OWNER } = process.env;
 const fileName = `${OWNER}-cookie.json`;
 const { [OWNER]: { username, password } } = sensitive;
 const cachePath = path.resolve(__dirname, `../cache/${fileName}`);
@@ -17,6 +16,7 @@ const generalOptions = {
   host: constants.host,
   path: constants.loginPath,
 };
+const logger = new Logger(__filename);
 
 function getViewState(body: string): string {
   const target = 'id="__VIEWSTATE" value="';

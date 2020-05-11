@@ -4,7 +4,7 @@ import * as path from 'path';
 import Logger from './logger';
 import { request, writeToCache } from './utils';
 import { year, month, day, isLocal } from '../config';
-import { courseId, getTimesPath, host } from '../constants';
+import { courseId, getTimesPath, host, noTimesErrorMessage } from '../constants';
 import * as sensitive from '../sensitive';
 
 const { OWNER } = process.env;
@@ -37,17 +37,26 @@ async function getNewTeeSheet(Cookie: string): Promise<object> {
   return JSON.parse(results);
 }
 
-function findBooking(teeObject: any): string {
+function findBooking(teeObject: { data: { teeSheet: any[] } }): string {
   const { teeSheet } = teeObject.data;
-  for (let idx = 0; idx < teeSheet.length; idx++) {
-    const { teeTime, teeSheetTimeId, players } = teeSheet[idx];
+  let returnNextAvailable = false;
+  let nextBestTeeId = '';
+  for (const teeTimeData of teeSheet) {
+    const { teeTime, teeSheetTimeId, players } = teeTimeData;
+    const isAvailable = players
+      .filter(({ playerType, playerLabel }) => playerType === 1 && playerLabel.toLowerCase() === 'available')
+      .length >= partners.length + 1;
     if (teeTime === targetTeeTime) {
-      const available = players.filter(({ playerType, playerLabel }) => playerType === 1 && playerLabel.toLowerCase() === 'available');
-      if (available.length >= partners.length + 1) return teeSheetTimeId;
-      throw new Error('Target time is not available.');
+      if (isAvailable) return teeSheetTimeId;
+      if (nextBestTeeId) return nextBestTeeId;
+      logger.warn('Target time is not available');
+      returnNextAvailable = true;
+    } else if (isAvailable) {
+      if (returnNextAvailable) return teeSheetTimeId;
+      nextBestTeeId = teeSheetTimeId;
     }
   }
-  throw new Error('Target time not found');
+  throw new Error(noTimesErrorMessage);
 }
 
 export async function getBookingId(Cookie: string): Promise<string> {

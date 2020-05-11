@@ -5,7 +5,7 @@ import { request } from './utils';
 
 const { [OWNER]: { partners }, buddies } = sensitive;
 
-function getReservation(reservations): Array<object> {
+function getReservation(reservations: any[]): Array<object> {
   const baseObject = {
     ReservationType: reservations[0].resType,
     ReservationId: reservations[0].reservationId,
