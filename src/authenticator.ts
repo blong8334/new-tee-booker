@@ -10,8 +10,6 @@ import { tParams, tGenericObject } from './typings'
 import Logger from './logger';
 
 const logger = new Logger(__filename);
-logger.info('SENSITIVE', sensitive);
-
 const fileName = `${OWNER}-cookie.json`;
 const { [OWNER]: { username, password } } = sensitive;
 const cachePath = path.resolve(__dirname, `../cache/${fileName}`);

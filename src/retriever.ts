@@ -6,7 +6,9 @@ import { request, writeToCache } from './utils';
 import { year, month, day, isLocal } from '../config';
 import { courseId, getTimesPath, host } from '../constants';
 
-const teeCachePath = path.resolve(__dirname, '../cache/tee-times.json');
+const { OWNER } = process.env;
+const fileName = `${OWNER}-tee-times.json`;
+const teeCachePath = path.resolve(__dirname, `../cache/${fileName}`);
 const date = year + month + day;
 const logger = new Logger(__filename);
 
@@ -29,7 +31,7 @@ async function getNewTeeSheet(Cookie: string): Promise<object> {
     method: 'GET',
   };
   const { results } = await request(reqOptions);
-  writeToCache(results, 'tee-times.json');
+  writeToCache(results, fileName);
   return JSON.parse(results);
 }
 
