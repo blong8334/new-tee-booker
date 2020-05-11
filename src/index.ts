@@ -12,6 +12,7 @@ const { year, month, day, hour, minute } = tryToBookAt;
 const logger = new Logger(__filename);
 const targetDate = new Date(year, month, day, hour, minute);
 const msecondsToGo = (): number => targetDate.valueOf() - Date.now();
+const maxTries = 10;
 
 let proceedRetries = 0;
 async function proceed(bookingId: string, cookies: string): Promise<void> {
@@ -31,7 +32,7 @@ async function proceed(bookingId: string, cookies: string): Promise<void> {
     if (error.message === noTimesErrorMessage) {
       process.exit(0);
     }
-    if (proceedRetries++ < 5) {
+    if (proceedRetries++ < maxTries) {
       logger.info('Retrying request');
       return proceed('', cookies);
     }
@@ -53,7 +54,7 @@ async function getCookiesAndId(): Promise<{ cookies: string; bookingId: string }
       logger.info('Nothing left to do');
       process.exit(0);
     }
-    if (cookRetries++ < 5) {
+    if (cookRetries++ < maxTries) {
       logger.info('Retrying cooking and booking id retrieval');
       return getCookiesAndId();
     }
