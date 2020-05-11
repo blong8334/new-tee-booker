@@ -9,7 +9,7 @@
     "compile": "tsc && tsc --allowJs false --declaration true",
     "build": "npm run lint && npm run compile",
     "full-build": "npm run clean && npm run build",
-    "test": "./node_modules/.bin/ts-node src/index",
+    "test": "WAIT=false OWNER=long node dist/index.js",
     "copy-sensitive": "scp -r -F ~/.ssh/config ~/projects/new-tee-booker/sensitive.js ec2-user@aws:/home/ec2-user/new-tee-booker/sensitive.js",
     "start": "./node_modules/.bin/pm2 start ecosystem.config.js",
     "start-long": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"long-booker\"",

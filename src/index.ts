@@ -5,6 +5,8 @@ import { proceedwithBooking } from './proceeder';
 import { bookTime } from './booker';
 import { tryToBookAt } from '../config';
 
+const { WAIT } = process.env;
+const waitToBook = WAIT !== 'false';
 const { year, month, day, hour, minute } = tryToBookAt;
 const logger = new Logger(__filename);
 const targetDate = new Date(year, month, day, hour, minute);
@@ -24,15 +26,16 @@ async function proceed(bookingId: string, cookies: string): Promise<void> {
   }
 }
 
-const interval = setInterval(() => logger.info('Waiting for ', new Date(Date.now() + msecondsToGo())), 60000);
+const interval = waitToBook && setInterval(() => logger.info('Waiting for ', new Date(Date.now() + msecondsToGo())), 60000);
 
-(async function (): Promise<void> {
+(async function (): Promise<any> {
   const cookies = await getCookies();
   logger.info('Got cook cooks');
   const bookingId = await getBookingId(cookies);
   logger.info('Got tee sheet');
-  setTimeout(() => {
+  const runner = (): Promise<void> => {
     clearInterval(interval);
-    proceed(bookingId, cookies);
-  }, msecondsToGo());
+    return proceed(bookingId, cookies);
+  };
+  return waitToBook ? setTimeout(runner, msecondsToGo()) : runner();
 })();
