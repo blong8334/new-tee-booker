@@ -15,7 +15,7 @@ const msecondsToGo = (): number => targetDate.valueOf() - Date.now();
 const maxTries = 10;
 
 let proceedRetries = 0;
-async function proceed(bookingId: string, cookies: string): Promise<void> {
+async function proceed(bookingId: string, cookies: string): Promise<void | NodeJS.Timeout> {
   try {
     if (!bookingId) {
       bookingId = await getBookingId(cookies);
@@ -23,7 +23,11 @@ async function proceed(bookingId: string, cookies: string): Promise<void> {
     const results = await proceedwithBooking(bookingId, cookies);
     logger.info('proceed results', JSON.stringify(results, null, 2));
     if (results.data.message && results.data.message.includes('A booking restriction is preventing you from')) {
-      return setTimeout(() => proceed(bookingId, cookies), 8000) as any;
+      return setTimeout(async () => { await proceed(bookingId, cookies); }, 250);
+    }
+    if (results.data.message && results.data.message.includes('The Tee Time you have selected is currently locked by another user')) {
+      logger.info('TEE TIME GOT SNATCHED - GETTING A NEW TIME');
+      return proceed('', cookies);
     }
     const bookingResults = await bookTime(results, cookies);
     logger.info('bookingResults', bookingResults);
