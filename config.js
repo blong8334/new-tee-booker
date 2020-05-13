@@ -1,9 +1,10 @@
 const { OWNER } = process.env;
 const { [OWNER]: { targetTeeTime } } = require('./sensitive');
-const bookingDay = 11;
+const bookingDay = 13;
 const month = 5;
 const year = 2020;
 const isLocal = false;
+const retryTimeout = 5000;
 
 const golfDay = bookingDay + 14;
 
@@ -25,4 +26,5 @@ module.exports = {
     hour,
     minute,
   },
+  retryTimeout,
 };
