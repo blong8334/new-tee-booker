@@ -69,10 +69,12 @@ async function getCookiesAndId(): Promise<{ cookies: string; bookingId: string }
 
 (async function (): Promise<any> {
   const { cookies, bookingId } = await getCookiesAndId();
-  const interval = waitToBook && setInterval(() => logger.info('Waiting for ', new Date(Date.now() + msecondsToGo())), 60000);
   const runner = async (): Promise<void> => {
-    clearInterval(interval);
     await proceed(bookingId, cookies);
   };
-  return waitToBook ? setTimeout(runner, msecondsToGo()) : runner();
+  if (waitToBook) {
+    logger.info('Waiting for ', new Date(Date.now() + msecondsToGo()));
+    return setTimeout(runner, msecondsToGo());
+  }
+  return runner();
 })();
