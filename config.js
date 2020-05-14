@@ -8,7 +8,7 @@ const retryTimeout = 5000;
 
 const golfDay = bookingDay + 14;
 
-const hour = 19; // 3 pm utc
+const hour = 22; // 6 pm utc
 const minute = 55;
 
 const format = (number) => (number < 10 ? '0' : '') + number;
