@@ -4,7 +4,7 @@ import { getBookingId } from './retriever';
 import { proceedwithBooking } from './proceeder';
 import { bookTime } from './booker';
 import { tryToBookAt, retryTimeout } from '../config';
-import { noTimesErrorMessage } from '../constants';
+import { noTimesErrorMessage, retryMessages } from '../constants';
 
 const { WAIT } = process.env;
 const waitToBook = WAIT !== 'false';
@@ -22,12 +22,16 @@ async function proceed(bookingId: string, cookies: string): Promise<void | NodeJ
     }
     const results = await proceedwithBooking(bookingId, cookies);
     logger.info('proceed results', JSON.stringify(results, null, 2));
-    if (results.data.message && results.data.message.includes('A booking restriction is preventing you from')) {
-      return setTimeout(async () => { await proceed(bookingId, cookies); }, retryTimeout || 8000);
-    }
-    if (results.data.message && results.data.message.includes('The Tee Time you have selected is currently locked by another user')) {
-      logger.info('TEE TIME GOT SNATCHED - GETTING A NEW TIME');
-      return proceed('', cookies);
+    const { message } = results.data;
+    if (message) {
+      if (retryMessages.some((m: string) => message.includes(m))) {
+        logger.info('Time is still locked. Waiting and retrying.');
+        return setTimeout(async () => { await proceed(bookingId, cookies); }, retryTimeout || 8000);
+      }
+      if (message.includes('The Tee Time you have selected is currently locked by another user')) {
+        logger.info('TEE TIME GOT SNATCHED - GETTING A NEW TIME');
+        return proceed('', cookies);
+      }
     }
     const bookingResults = await bookTime(results, cookies);
     logger.info('bookingResults', bookingResults);

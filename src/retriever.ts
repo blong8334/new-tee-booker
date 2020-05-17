@@ -42,8 +42,8 @@ function findBooking(teeObject: { data: { teeSheet: any[] } }): string {
   let returnNextAvailable = false;
   let nextBestTeeId = '';
   for (const teeTimeData of teeSheet) {
-    const { teeTime, teeSheetTimeId, players } = teeTimeData;
-    const isAvailable = players
+    const { bookingTimeTypeTxt, teeTime, teeSheetTimeId, players } = teeTimeData;
+    const isAvailable = bookingTimeTypeTxt === 'Blocked' || players
       .filter(({ playerType, playerLabel }) => playerType === 1 && playerLabel.toLowerCase() === 'available')
       .length >= partners.length + 1;
     if (teeTime === targetTeeTime) {

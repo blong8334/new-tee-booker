@@ -10,4 +10,8 @@ module.exports = {
   proceedPath: (bookingId) => `/api/v1/teetimes/ProceedBooking/${bookingId}`,
   bookingPath: '/api/v1/teetimes/CommitBooking/0',
   noTimesErrorMessage: 'No times left for the target booking day',
+  retryMessages: [
+    'The tee time you have selected is fully booked',
+    'A booking restriction is preventing you from',
+  ],
 };
