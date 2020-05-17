@@ -1,5 +1,5 @@
 module.exports = {
-  courseId: '1361',
+  courseId: '1440',
   host: 'newjerseynational.clubhouseonline-e3.com',
   loginPath: '/login.aspx',
   formUsername: 'p$lt$PageContent$pageplaceholder$p$lt$zoneLeft$CHOLogin$LoginControl$ctl00$Login1$UserName',
