@@ -1,7 +1,8 @@
 const { OWNER } = process.env;
 const { [OWNER]: { targetTeeTime, golfDay } } = require('./sensitive');
-const bookingDay = 18;
-const month = 5;
+const bookingDay = 25;
+const bookingMonth = 5;
+const month = 6;
 const year = 2020;
 const isLocal = false;
 const retryTimeout = 5000;
@@ -19,7 +20,7 @@ module.exports = {
   isLocal,
   tryToBookAt: {
     year,
-    month: month - 1, // Jan is 0. Dec is 11
+    month: bookingMonth - 1, // Jan is 0. Dec is 11
     day: bookingDay,
     hour,
     minute,
