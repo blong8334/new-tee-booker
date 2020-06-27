@@ -1,8 +1,8 @@
 const { OWNER } = process.env;
 const { [OWNER]: { targetTeeTime, golfDay } } = require('./sensitive');
-const bookingDay = 25;
-const bookingMonth = 5;
-const month = 6;
+const bookingDay = 27;
+const bookingMonth = 6;
+const month = 7;
 const year = 2020;
 const isLocal = false;
 const retryTimeout = 5000;
