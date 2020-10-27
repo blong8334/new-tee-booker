@@ -12,8 +12,7 @@
     "test": "OWNER=long ./node_modules/.bin/ts-node src/index",
     "copy-sensitive": "scp -r -F ~/.ssh/config ~/projects/new-tee-booker/sensitive.js ec2-user@aws:/home/ec2-user/new-tee-booker/sensitive.js",
     "start": "./node_modules/.bin/pm2 start ecosystem.config.js",
-    "start-long": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"long-booker\"",
-    "start-leddy": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"leddy-booker\""
+    "start-long": "./node_modules/.bin/pm2 start ecosystem.config.js --only \"long-booker\""
   },
   "author": "",
   "license": "ISC",
