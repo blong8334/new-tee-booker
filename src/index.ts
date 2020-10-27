@@ -3,15 +3,10 @@ import { getCookies } from './authenticator';
 import { getBookingId } from './retriever';
 import { proceedwithBooking } from './proceeder';
 import { bookTime } from './booker';
-import { tryToBookAt, retryTimeout } from '../config';
 import { noTimesErrorMessage, retryMessages } from '../constants';
 
-const { WAIT } = process.env;
-const waitToBook = WAIT !== 'false';
-const { year, month, day, hour, minute } = tryToBookAt;
+const retryTimeout = 5000;
 const logger = new Logger(__filename);
-const targetDate = new Date(year, month, day, hour, minute);
-const msecondsToGo = (): number => targetDate.valueOf() - Date.now();
 const maxTries = 10;
 
 let proceedRetries = 0;
@@ -26,7 +21,7 @@ async function proceed(bookingId: string, cookies: string): Promise<void | NodeJ
     if (message) {
       if (retryMessages.some((m: string) => message.includes(m))) {
         logger.info('Time is still locked. Waiting and retrying.');
-        return setTimeout(async () => { await proceed(bookingId, cookies); }, retryTimeout || 8000);
+        return setTimeout(async () => { await proceed(bookingId, cookies); }, retryTimeout);
       }
       if (message.includes('The Tee Time you have selected is currently locked by another user')) {
         logger.info('TEE TIME GOT SNATCHED - GETTING A NEW TIME');
@@ -70,15 +65,7 @@ async function getCookiesAndId(): Promise<{ cookies: string; bookingId: string }
   }
 }
 
-
 (async function (): Promise<any> {
   const { cookies, bookingId } = await getCookiesAndId();
-  const runner = async (): Promise<void> => {
-    await proceed(bookingId, cookies);
-  };
-  if (waitToBook) {
-    logger.info('Waiting for ', new Date(Date.now() + msecondsToGo()));
-    return setTimeout(runner, msecondsToGo());
-  }
-  return runner();
+  return proceed(bookingId, cookies);
 })();

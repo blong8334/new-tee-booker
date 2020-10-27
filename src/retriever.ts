@@ -1,27 +1,17 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 import Logger from './logger';
-import { request, writeToCache } from './utils';
-import { year, month, day, isLocal } from '../config';
+import { request } from './utils';
 import { courseId, getTimesPath, host, noTimesErrorMessage } from '../constants';
 import * as sensitive from '../sensitive';
 
+const format = (number: number): string => (number < 10 ? '0' : '') + number;
 const { OWNER } = process.env;
 const { [OWNER]: { partners, targetTeeTime } } = sensitive;
-const fileName = `${OWNER}-tee-times.json`;
-const teeCachePath = path.resolve(__dirname, `../cache/${fileName}`);
-const date = year + month + day;
+const golfDay = new Date(new Date().valueOf() + 1000 * 60 * 60 * 24 * 14);
+const year = golfDay.getFullYear();
+const month = golfDay.getMonth() + 1;
+const day = golfDay.getDate();
+const date = '' + year + format(month) + format(day);
 const logger = new Logger(__filename);
-
-function readTeeCache(): object {
-  try {
-    const cache = fs.readFileSync(teeCachePath, { encoding: 'utf8' });
-    return typeof cache === 'string' ? JSON.parse(cache) : cache;
-  } catch (error) {
-    logger.warn('Cannot read tee cache');
-  }
-}
 
 async function getNewTeeSheet(Cookie: string): Promise<object> {
   const reqOptions = {
@@ -33,7 +23,6 @@ async function getNewTeeSheet(Cookie: string): Promise<object> {
     method: 'GET',
   };
   const { results } = await request(reqOptions);
-  writeToCache(results, fileName);
   return JSON.parse(results);
 }
 
@@ -52,7 +41,10 @@ function findBooking(teeObject: { data: { teeSheet: any[] } }): string {
       logger.warn('Target time is not available');
       returnNextAvailable = true;
     } else if (isAvailable) {
-      if (returnNextAvailable) return teeSheetTimeId;
+      if (teeTime > targetTeeTime || returnNextAvailable) {
+        logger.info('BEST TEE TIME:', teeTime);
+        return teeSheetTimeId;
+      }
       logger.info(`Next best time is at ${teeTime}`);
       nextBestTeeId = teeSheetTimeId;
     }
@@ -61,14 +53,6 @@ function findBooking(teeObject: { data: { teeSheet: any[] } }): string {
 }
 
 export async function getBookingId(Cookie: string): Promise<string> {
-  let teeSheet;
-  if (isLocal) {
-    logger.info('Reading from cache');
-    teeSheet = readTeeCache();
-  }
-  if (!teeSheet) {
-    logger.info('Retrieving new tee sheet');
-    teeSheet = await getNewTeeSheet(Cookie);
-  }
-  return findBooking(teeSheet);
+  const teeSheet = await getNewTeeSheet(Cookie);
+  return findBooking(teeSheet as any);
 }
