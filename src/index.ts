@@ -66,6 +66,10 @@ async function getCookiesAndId(): Promise<{ cookies: string; bookingId: string }
 }
 
 (async function (): Promise<any> {
+  if (new Date().getMinutes() !== 55) {
+    logger.info('IT IS NOT TIME TO BOOK');
+    process.exit(0);
+  }
   const { cookies, bookingId } = await getCookiesAndId();
   return proceed(bookingId, cookies);
 })();
