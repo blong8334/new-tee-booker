@@ -13,5 +13,6 @@ module.exports = {
   retryMessages: [
     'The tee time you have selected is fully booked',
     'A booking restriction is preventing you from',
+    'Online Tee Times is currently unavailable',
   ],
 };
