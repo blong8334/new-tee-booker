@@ -69,7 +69,7 @@ async function getCookiesAndId(): Promise<{ cookies: string; bookingId: string }
   const now = new Date();
   const day = now.getDay();
   const isRightDay = day === 0 || day === 6;
-  const isRightHour = now.getHours() === 19;
+  const isRightHour = now.getHours() === 20;
   const isRightMinutes = now.getMinutes() >= 55;
   if (!(isRightDay && isRightHour && isRightMinutes)) {
     logger.info('IT IS NOT TIME TO BOOK');
